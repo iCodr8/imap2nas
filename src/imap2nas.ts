@@ -26,15 +26,33 @@ class Imap2Nas {
         // Load dotenv configuration
         config();
 
-        this.configuration.host = process.env.IMAP_HOST ? process.env.IMAP_HOST : this.configuration.host;
-        this.configuration.user = process.env.IMAP_USER ? process.env.IMAP_USER : this.configuration.user;
-        this.configuration.password = process.env.IMAP_PASSWORD ? process.env.IMAP_PASSWORD : this.configuration.password;
-        this.configuration.port = process.env.IMAP_PORT ? +process.env.IMAP_PORT : this.configuration.port;
-        this.configuration.tls = process.env.IMAP_TLS ? process.env.IMAP_TLS === 'true' : this.configuration.tls;
-        this.configuration.path = process.env.MAIL_STORAGE_PATH ? process.env.MAIL_STORAGE_PATH : this.configuration.path;
-        this.configuration.phantomjs = process.env.PHANTOMJS_PATH ? process.env.PHANTOMJS_PATH : this.configuration.phantomjs;
-        this.configuration.generateAsHtml = process.env.GENERATE_HTML ? process.env.GENERATE_HTML !== 'false' : this.configuration.generateAsHtml;
-        this.configuration.generateAsPdf = process.env.GENERATE_PDF ? process.env.GENERATE_PDF !== 'false' : this.configuration.generateAsPdf;
+        this.configuration.host = process.env.IMAP_HOST
+            ? process.env.IMAP_HOST
+            : this.configuration.host;
+        this.configuration.user = process.env.IMAP_USER
+            ? process.env.IMAP_USER
+            : this.configuration.user;
+        this.configuration.password = process.env.IMAP_PASSWORD
+            ? process.env.IMAP_PASSWORD
+            : this.configuration.password;
+        this.configuration.port = process.env.IMAP_PORT
+            ? +process.env.IMAP_PORT
+            : this.configuration.port;
+        this.configuration.tls = process.env.IMAP_TLS
+            ? process.env.IMAP_TLS === 'true'
+            : this.configuration.tls;
+        this.configuration.path = process.env.MAIL_STORAGE_PATH
+            ? process.env.MAIL_STORAGE_PATH
+            : this.configuration.path;
+        this.configuration.phantomjs = process.env.PHANTOMJS_PATH
+            ? process.env.PHANTOMJS_PATH
+            : this.configuration.phantomjs;
+        this.configuration.generateAsHtml = process.env.GENERATE_HTML
+            ? process.env.GENERATE_HTML !== 'false'
+            : this.configuration.generateAsHtml;
+        this.configuration.generateAsPdf = process.env.GENERATE_PDF
+            ? process.env.GENERATE_PDF !== 'false'
+            : this.configuration.generateAsPdf;
     }
 
     async init() {
