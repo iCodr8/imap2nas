@@ -4,7 +4,7 @@ services:
   imap2nas:
     build:
       context: .
-      dockerfile: ./docker/Dockerfile
+      dockerfile: ./Dockerfile
     environment:
       - IMAP_HOST=${IMAP_HOST}
       - IMAP_USER=${IMAP_USER}
