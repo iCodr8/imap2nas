@@ -1,0 +1,40 @@
+{
+  "name": "imap2nas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "prestart": "npm run lint",
+    "start": "npx ts-node src/imap2nas.ts",
+    "lint": "tslint -c tslint.json -p tsconfig.json --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "date-fns": "^2.14.0",
+    "dotenv": "^8.2.0",
+    "html-pdf": "^2.2.0",
+    "imap": "^0.8.19",
+    "mailparser": "^2.7.7",
+    "ncp": "^2.0.0",
+    "rimraf": "^3.0.2",
+    "rxjs": "^6.5.5",
+    "ts-node": "^8.10.2",
+    "typings": "^2.1.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.6",
+    "@types/date-fns": "^2.6.0",
+    "@types/html-pdf": "^2.2.0",
+    "@types/imap": "^0.8.30",
+    "@types/mailparser": "^2.7.3",
+    "@types/ncp": "^2.0.4",
+    "@types/node": "^14.0.9",
+    "@types/rimraf": "^3.0.0",
+    "tslint": "^6.1.2",
+    "typescript": "^3.9.3"
+  }
+}

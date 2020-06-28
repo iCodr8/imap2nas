@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  imap2nas:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    environment:
+      - IMAP_HOST=${IMAP_HOST}
+      - IMAP_USER=${IMAP_USER}
+      - IMAP_PASSWORD=${IMAP_PASSWORD}
+      - IMAP_PORT=${IMAP_PORT}
+      - IMAP_TLS=${IMAP_TLS}
+      - MAIL_STORAGE_PATH=/imap2nas/data
+      - PHANTOMJS_PATH=/usr/local/bin/phantomjs
+      - GENERATE_HTML=${GENERATE_HTML}
+      - GENERATE_PDF=${GENERATE_PDF}
+    volumes:
+      - ./data:/imap2nas/data:rw
