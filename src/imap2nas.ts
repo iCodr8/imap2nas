@@ -108,35 +108,54 @@ class Imap2Nas {
         simpleParser(stream, (err, mail) => {
             const formattedDate = format(mail.date, 'yyyy-MM-dd_HH-mm-ss');
             const optimizedSubject = (mail.subject + '').replace(/[^a-zA-Z ']/g, '').trim();
-            const filePath = this.configuration.path + '/' + formattedDate + '_ID-' + id + '_' + optimizedSubject + '.pdf';
-
-            if (fs.existsSync(filePath)) {
-                this.log('PDF #' + id + ' already exists', 'warning');
-                return;
-            }
-
+            const fileName = formattedDate + '_ID-' + id + '_' + optimizedSubject;
+            const filePath = this.configuration.path + '/' + fileName;
             const html = mail.html ? mail.html : mail.textAsHtml;
-            const pdfOptions: CreateOptions = {
-                phantomPath: this.configuration.phantomjs,
-                format: 'A4',
-            };
 
             if (this.configuration.generateAsHtml) {
-                fs.writeFileSync(filePath + '.html', html);
-                this.log('Created HTML #' + id + ' successful', 'success');
+                this.createHtml(filePath, id, html);
             }
 
             if (this.configuration.generateAsPdf) {
-                pdf.create(html, pdfOptions).toFile(filePath, (pdfError: any, pdfResult: any) => {
-                    if (pdfError) {
-                        this.log(pdfError, 'error');
-                    } else {
-                        this.log('Created PDF #' + id + ' successful', 'success');
-                    }
-
-                    return;
-                });
+                this.createPdf(filePath, id, html);
             }
+        });
+    }
+
+    private createHtml(filePath: string, id: string, html: string) {
+        const filePathHtml = filePath + '.html';
+
+        if (fs.existsSync(filePathHtml)) {
+            this.log('HTML #' + id + ' already exists', 'warning');
+            return;
+        }
+
+        fs.writeFileSync(filePathHtml, html);
+        fs.chmodSync(filePathHtml, '+r');
+        this.log('Created HTML #' + id + ' successful', 'success');
+    }
+
+    private createPdf(filePath: string, id: string, html: string) {
+        const filePathPdf = filePath + '.pdf';
+
+        if (fs.existsSync(filePathPdf)) {
+            this.log('PDF #' + id + ' already exists', 'warning');
+            return;
+        }
+
+        const pdfOptions: CreateOptions = {
+            phantomPath: this.configuration.phantomjs,
+            format: 'A4',
+        };
+
+        pdf.create(html, pdfOptions).toFile(filePathPdf, (pdfError: any, pdfResult: any) => {
+            if (pdfError) {
+                this.log(pdfError, 'error');
+            } else {
+                this.log('Created PDF #' + id + ' successful', 'success');
+            }
+
+            return;
         });
     }
 
