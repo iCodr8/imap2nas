@@ -9,6 +9,10 @@
     "lint": "tslint -c tslint.json -p tsconfig.json --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/iCodr8/imap2nas.git"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
