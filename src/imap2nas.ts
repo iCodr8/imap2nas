@@ -109,21 +109,20 @@ class Imap2Nas {
             const formattedDate = format(mail.date, 'yyyy-MM-dd_HH-mm-ss');
             const optimizedSubject = (mail.subject + '').replace(/[^a-zA-Z ']/g, '').trim();
             const fileName = formattedDate + '_ID-' + id + '_' + optimizedSubject;
-            const filePath = this.configuration.path + '/' + fileName;
             const html = mail.html ? mail.html : mail.textAsHtml;
 
             if (this.configuration.generateAsHtml) {
-                this.createHtml(filePath, id, html);
+                this.createHtml(fileName, id, html);
             }
 
             if (this.configuration.generateAsPdf) {
-                this.createPdf(filePath, id, html);
+                this.createPdf(fileName, id, html);
             }
         });
     }
 
-    private createHtml(filePath: string, id: string, html: string) {
-        const filePathHtml = filePath + '.html';
+    private createHtml(fileName: string, id: string, html: string) {
+        const filePathHtml = this.configuration.path + '/' + fileName + '.html';
 
         if (fs.existsSync(filePathHtml)) {
             this.log('HTML #' + id + ' already exists', 'warning');
@@ -135,8 +134,8 @@ class Imap2Nas {
         this.log('Created HTML #' + id + ' successful', 'success');
     }
 
-    private createPdf(filePath: string, id: string, html: string) {
-        const filePathPdf = filePath + '.pdf';
+    private createPdf(fileName: string, id: string, html: string) {
+        const filePathPdf = this.configuration.path + '/' + fileName + '.pdf';
 
         if (fs.existsSync(filePathPdf)) {
             this.log('PDF #' + id + ' already exists', 'warning');
