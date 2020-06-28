@@ -1,7 +1,7 @@
 {
   "name": "imap2nas",
   "version": "1.0.0",
-  "description": "",
+  "description": "Store emails of an IMAP account on a specified path as html or pdf.",
   "main": "src/index.js",
   "scripts": {
     "prestart": "npm run lint",

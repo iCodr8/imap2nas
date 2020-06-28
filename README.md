@@ -1,8 +1,8 @@
 IMAP 2 NAS
 ==========
 
-Copies the last 5 emails as html and pdf to a directory.
-I am using that to store them on my Synology NAS.
+Store emails of an IMAP account on a specified path as html or pdf.
+This can be used to store them on a NAS.
 
 Usage
 -----
