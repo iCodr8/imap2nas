@@ -73,7 +73,7 @@ class Imap2Nas {
                         throw err1;
                     }
 
-                    const startAtMessageNumber = box.messages.total >= 5 ? (box.messages.total - 5) : 0;
+                    const startAtMessageNumber = box.messages.total > 5 ? (box.messages.total - 5) : 1;
                     const f = imap.seq.fetch(startAtMessageNumber + ':*', {
                         bodies: [''],
                         struct: true,
