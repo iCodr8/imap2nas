@@ -21,6 +21,7 @@ class Imap2Nas {
         phantomjs: '/usr/local/bin/phantomjs',
         generateAsHtml: true,
         generateAsPdf: true,
+        emailFromRegex: '.*',
     };
 
     constructor() {
@@ -54,6 +55,9 @@ class Imap2Nas {
         this.configuration.generateAsPdf = process.env.GENERATE_PDF
             ? process.env.GENERATE_PDF !== 'false'
             : this.configuration.generateAsPdf;
+        this.configuration.emailFromRegex = process.env.EMAIL_FROM_REGEX
+            ? process.env.EMAIL_FROM_REGEX
+            : this.configuration.emailFromRegex;
     }
 
     async init() {
@@ -72,6 +76,11 @@ class Imap2Nas {
                 (err1: any, box: any) => {
                     if (err1) {
                         throw err1;
+                    }
+
+                    if (box.messages.total === 0) {
+                        this.log('INBOX is empty!', 'warning');
+                        return;
                     }
 
                     const startAtMessageNumber = box.messages.total > 5 ? (box.messages.total - 5) : 1;
@@ -114,6 +123,13 @@ class Imap2Nas {
             const pathToFile = this.configuration.path
                 + '/' + format(mail.date, 'yyyy')
                 + '/' + format(mail.date, 'MM');
+
+            const emailFromRegex = new RegExp(this.configuration.emailFromRegex, 'g');
+
+            if (!mail.from.text.match(emailFromRegex)) {
+                this.log("Invalid email sender! Only allowed: \"${emailFromRegex}\"", 'warning');
+                return;
+            }
 
             mkdirp(pathToFile);
 
