@@ -17,6 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/mkdirp": "^1.0.1",
     "colors": "^1.4.0",
     "date-fns": "^2.14.0",
     "dotenv": "^8.2.0",
@@ -24,6 +25,7 @@
     "http-proxy-agent": "^4.0.1",
     "imap": "^0.8.19",
     "mailparser": "^2.7.7",
+    "mkdirp": "^1.0.4",
     "ncp": "^2.0.0",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.5",

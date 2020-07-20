@@ -5,6 +5,7 @@ import fs from 'fs';
 import pdf, { CreateOptions } from 'html-pdf';
 import Connection from 'imap';
 import { simpleParser } from 'mailparser';
+import mkdirp from 'mkdirp';
 import process from 'process';
 import { Stream } from 'stream';
 
@@ -106,23 +107,28 @@ class Imap2Nas {
 
     async parseMailAndSaveAsPdf(stream: Stream, id: string) {
         simpleParser(stream, (err, mail) => {
-            const formattedDate = format(mail.date, 'yyyy-MM-dd_HH-mm-ss');
-            const optimizedSubject = (mail.subject + '').replace(/[^a-zA-Z ']/g, '').trim();
-            const fileName = formattedDate + '_ID-' + id + '_' + optimizedSubject;
+            const formattedDate = format(mail.date, 'dd_HH-mm-ss');
+            // const optimizedSubject = (mail.subject + '').replace(/[^a-zA-Z ']/g, '').trim();
+            const fileName = formattedDate + '_ID-' + id;
             const html = mail.html ? mail.html : mail.textAsHtml;
+            const pathToFile = this.configuration.path
+                + '/' + format(mail.date, 'yyyy')
+                + '/' + format(mail.date, 'MM');
+
+            mkdirp(pathToFile);
 
             if (this.configuration.generateAsHtml) {
-                this.createHtml(fileName, id, html);
+                this.createHtml(pathToFile, fileName, id, html);
             }
 
             if (this.configuration.generateAsPdf) {
-                this.createPdf(fileName, id, html);
+                this.createPdf(pathToFile, fileName, id, html);
             }
         });
     }
 
-    private createHtml(fileName: string, id: string, html: string) {
-        const filePathHtml = this.configuration.path + '/' + fileName + '.html';
+    private createHtml(pathToFile: string, fileName: string, id: string, html: string) {
+        const filePathHtml = pathToFile + '/' + fileName + '.html';
 
         if (fs.existsSync(filePathHtml)) {
             this.log('HTML #' + id + ' already exists', 'warning');
@@ -134,8 +140,8 @@ class Imap2Nas {
         this.log('Created HTML #' + id + ' successful', 'success');
     }
 
-    private createPdf(fileName: string, id: string, html: string) {
-        const filePathPdf = this.configuration.path + '/' + fileName + '.pdf';
+    private createPdf(pathToFile: string, fileName: string, id: string, html: string) {
+        const filePathPdf = pathToFile + '/' + fileName + '.pdf';
 
         if (fs.existsSync(filePathPdf)) {
             this.log('PDF #' + id + ' already exists', 'warning');
