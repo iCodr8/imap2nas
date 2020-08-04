@@ -160,7 +160,6 @@ class Imap2Nas {
         }
 
         fs.writeFileSync(filePathHtml, html);
-        fs.chmodSync(filePathHtml, 755);
         this.log('Created HTML #' + id + ' successful', 'success');
     }
 
@@ -199,8 +198,7 @@ class Imap2Nas {
                 return;
             }
 
-            fs.writeFileSync(filePath, attachment.content);
-            fs.chmodSync(filePath, 755);
+            fs.writeFileSync(filePath, attachment.content, 'binary');
             this.log('Created attachment ' + attachment.filename + ' of #' + id + ' successful', 'success');
         });
     }
