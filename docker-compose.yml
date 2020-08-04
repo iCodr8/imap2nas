@@ -15,6 +15,7 @@ services:
       - PHANTOMJS_PATH=/usr/local/bin/phantomjs
       - GENERATE_HTML=${GENERATE_HTML}
       - GENERATE_PDF=${GENERATE_PDF}
+      - SAVE_ATTACHMENTS=${SAVE_ATTACHMENTS}
       - EMAIL_FROM_REGEX=${EMAIL_FROM_REGEX}
     volumes:
       - ./data:/imap2nas/data:rw

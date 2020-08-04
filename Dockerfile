@@ -11,6 +11,7 @@ ENV MAIL_STORAGE_PATH='/imap2nas/data'
 ENV PHANTOMJS_PATH=/usr/local/bin/phantomjs
 ENV GENERATE_HTML=false
 ENV GENERATE_PDF=true
+ENV SAVE_ATTACHMENTS=true
 
 RUN apt-get update -yqq
 

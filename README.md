@@ -26,6 +26,7 @@ services:
       - PHANTOMJS_PATH=/usr/local/bin/phantomjs
       - GENERATE_HTML=true
       - GENERATE_PDF=true
+      - SAVE_ATTACHMENTS=true
     volumes:
       - ./data:/imap2nas/data:rw
 ```

@@ -4,7 +4,7 @@ import { config } from 'dotenv';
 import fs from 'fs';
 import pdf, { CreateOptions } from 'html-pdf';
 import Connection from 'imap';
-import { simpleParser } from 'mailparser';
+import { Attachment, simpleParser } from 'mailparser';
 import mkdirp from 'mkdirp';
 import process from 'process';
 import { Stream } from 'stream';
@@ -21,6 +21,7 @@ class Imap2Nas {
         phantomjs: '/usr/local/bin/phantomjs',
         generateAsHtml: true,
         generateAsPdf: true,
+        saveAttachments: true,
         emailFromRegex: '.*',
     };
 
@@ -55,6 +56,9 @@ class Imap2Nas {
         this.configuration.generateAsPdf = process.env.GENERATE_PDF
             ? process.env.GENERATE_PDF !== 'false'
             : this.configuration.generateAsPdf;
+        this.configuration.saveAttachments = process.env.SAVE_ATTACHMENTS
+            ? process.env.SAVE_ATTACHMENTS !== 'false'
+            : this.configuration.saveAttachments;
         this.configuration.emailFromRegex = process.env.EMAIL_FROM_REGEX
             ? process.env.EMAIL_FROM_REGEX
             : this.configuration.emailFromRegex;
@@ -118,27 +122,31 @@ class Imap2Nas {
         simpleParser(stream, (err, mail) => {
             const formattedDate = format(mail.date, 'dd_HH-mm-ss');
             // const optimizedSubject = (mail.subject + '').replace(/[^a-zA-Z ']/g, '').trim();
-            const fileName = formattedDate + '_ID-' + id;
             const html = mail.html ? mail.html : mail.textAsHtml;
             const pathToFile = this.configuration.path
                 + '/' + format(mail.date, 'yyyy')
-                + '/' + format(mail.date, 'MM');
+                + '/' + format(mail.date, 'MM')
+                + '/' + formattedDate + '_ID-' + id;
 
             const emailFromRegex = new RegExp(this.configuration.emailFromRegex, 'g');
 
             if (!mail.from.text.match(emailFromRegex)) {
-                this.log("Invalid email sender! Only allowed: \"${emailFromRegex}\"", 'warning');
+                this.log(`Invalid email sender "${mail.from.text}"! Only allowed regex: "${emailFromRegex}"`, 'warning');
                 return;
             }
 
-            mkdirp(pathToFile);
+            mkdirp.sync(pathToFile);
 
             if (this.configuration.generateAsHtml) {
-                this.createHtml(pathToFile, fileName, id, html);
+                this.createHtml(pathToFile, 'content', id, html);
             }
 
             if (this.configuration.generateAsPdf) {
-                this.createPdf(pathToFile, fileName, id, html);
+                this.createPdf(pathToFile, 'content', id, html);
+            }
+
+            if (this.configuration.saveAttachments) {
+                this.saveAttachments(pathToFile, id, mail.attachments);
             }
         });
     }
@@ -152,7 +160,7 @@ class Imap2Nas {
         }
 
         fs.writeFileSync(filePathHtml, html);
-        fs.chmodSync(filePathHtml, '+r');
+        fs.chmodSync(filePathHtml, 755);
         this.log('Created HTML #' + id + ' successful', 'success');
     }
 
@@ -177,6 +185,23 @@ class Imap2Nas {
             }
 
             return;
+        });
+    }
+
+    private saveAttachments(pathToFile: string, id: string, attachments: Attachment[]) {
+        this.log('Attachments: ' + attachments.length);
+
+        attachments.forEach((attachment) => {
+            const filePath = pathToFile + '/' + attachment.filename;
+
+            if (fs.existsSync(filePath)) {
+                this.log('Attachment ' + attachment.filename + ' of #' + id + ' already exists', 'warning');
+                return;
+            }
+
+            fs.writeFileSync(filePath, attachment.content);
+            fs.chmodSync(filePath, 755);
+            this.log('Created attachment ' + attachment.filename + ' of #' + id + ' successful', 'success');
         });
     }
 
