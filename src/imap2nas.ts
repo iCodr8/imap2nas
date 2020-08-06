@@ -152,21 +152,22 @@ class Imap2Nas {
     }
 
     private createHtml(pathToFile: string, fileName: string, id: string, html: string) {
-        const filePathHtml = pathToFile + '/' + fileName + '.html';
+        const filePath = pathToFile + '/' + fileName + '.html';
 
-        if (fs.existsSync(filePathHtml)) {
+        if (fs.existsSync(filePath)) {
             this.log('HTML #' + id + ' already exists', 'warning');
             return;
         }
 
-        fs.writeFileSync(filePathHtml, html);
+        fs.writeFileSync(filePath, html);
+        fs.chmodSync(filePath, 644);
         this.log('Created HTML #' + id + ' successful', 'success');
     }
 
     private createPdf(pathToFile: string, fileName: string, id: string, html: string) {
-        const filePathPdf = pathToFile + '/' + fileName + '.pdf';
+        const filePath = pathToFile + '/' + fileName + '.pdf';
 
-        if (fs.existsSync(filePathPdf)) {
+        if (fs.existsSync(filePath)) {
             this.log('PDF #' + id + ' already exists', 'warning');
             return;
         }
@@ -176,10 +177,11 @@ class Imap2Nas {
             format: 'A4',
         };
 
-        pdf.create(html, pdfOptions).toFile(filePathPdf, (pdfError: any, pdfResult: any) => {
+        pdf.create(html, pdfOptions).toFile(filePath, (pdfError: any, pdfResult: any) => {
             if (pdfError) {
                 this.log(pdfError, 'error');
             } else {
+                fs.chmodSync(filePath, 644);
                 this.log('Created PDF #' + id + ' successful', 'success');
             }
 
@@ -199,6 +201,7 @@ class Imap2Nas {
             }
 
             fs.writeFileSync(filePath, attachment.content, 'binary');
+            fs.chmodSync(filePath, 644);
             this.log('Created attachment ' + attachment.filename + ' of #' + id + ' successful', 'success');
         });
     }
