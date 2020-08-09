@@ -6,6 +6,7 @@ import pdf, { CreateOptions } from 'html-pdf';
 import Connection from 'imap';
 import { Attachment, simpleParser } from 'mailparser';
 import mkdirp from 'mkdirp';
+import path from 'path';
 import process from 'process';
 import { Stream } from 'stream';
 
@@ -67,14 +68,6 @@ class Imap2Nas {
         this.configuration.emailFromRegex = process.env.EMAIL_FROM_REGEX
             ? process.env.EMAIL_FROM_REGEX
             : this.configuration.emailFromRegex;
-
-        if (this.configuration.userId) {
-            process.setuid(this.configuration.userId);
-        }
-
-        if (this.configuration.userId) {
-            process.setgid(this.configuration.groupId);
-        }
     }
 
     async init() {
@@ -149,7 +142,12 @@ class Imap2Nas {
             }
 
             mkdirp.sync(pathToFile);
+
             fs.chownSync(pathToFile, this.configuration.userId, this.configuration.groupId);
+            const pathToFileSub1 = path.dirname(pathToFile);
+            fs.chownSync(pathToFileSub1, this.configuration.userId, this.configuration.groupId);
+            const pathToFileSub2 = path.dirname(pathToFileSub1);
+            fs.chownSync(pathToFileSub2, this.configuration.userId, this.configuration.groupId);
 
             if (this.configuration.generateAsHtml) {
                 this.createHtml(pathToFile, 'content', id, html);
