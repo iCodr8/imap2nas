@@ -11,6 +11,8 @@ services:
       - IMAP_PASSWORD=${IMAP_PASSWORD}
       - IMAP_PORT=${IMAP_PORT}
       - IMAP_TLS=${IMAP_TLS}
+      - USER_ID=${USER_ID}
+      - GROUP_ID=${GROUP_ID}
       - MAIL_STORAGE_PATH=/imap2nas/data
       - PHANTOMJS_PATH=/usr/local/bin/phantomjs
       - GENERATE_HTML=${GENERATE_HTML}

@@ -16,6 +16,8 @@ class Imap2Nas {
         password: '',
         port: 993,
         tls: true,
+        userId: process.getuid(),
+        groupId: process.getgid(),
         path: './data',
         // phantomjs: './node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs',
         phantomjs: '/usr/local/bin/phantomjs',
@@ -41,9 +43,12 @@ class Imap2Nas {
         this.configuration.port = process.env.IMAP_PORT
             ? +process.env.IMAP_PORT
             : this.configuration.port;
-        this.configuration.tls = process.env.IMAP_TLS
-            ? process.env.IMAP_TLS === 'true'
-            : this.configuration.tls;
+        this.configuration.userId = process.env.USER_ID
+            ? +process.env.USER_ID
+            : this.configuration.userId;
+        this.configuration.groupId = process.env.GROUP_ID
+            ? +process.env.GROUP_ID
+            : this.configuration.groupId;
         this.configuration.path = process.env.MAIL_STORAGE_PATH
             ? process.env.MAIL_STORAGE_PATH
             : this.configuration.path;
@@ -62,6 +67,14 @@ class Imap2Nas {
         this.configuration.emailFromRegex = process.env.EMAIL_FROM_REGEX
             ? process.env.EMAIL_FROM_REGEX
             : this.configuration.emailFromRegex;
+
+        if (this.configuration.userId) {
+            process.setuid(this.configuration.userId);
+        }
+
+        if (this.configuration.userId) {
+            process.setgid(this.configuration.groupId);
+        }
     }
 
     async init() {
@@ -136,6 +149,7 @@ class Imap2Nas {
             }
 
             mkdirp.sync(pathToFile);
+            fs.chownSync(pathToFile, this.configuration.userId, this.configuration.groupId);
 
             if (this.configuration.generateAsHtml) {
                 this.createHtml(pathToFile, 'content', id, html);
@@ -161,6 +175,7 @@ class Imap2Nas {
 
         fs.writeFileSync(filePath, html);
         fs.chmodSync(filePath, 644);
+        fs.chownSync(filePath, this.configuration.userId, this.configuration.groupId);
         this.log('Created HTML #' + id + ' successful', 'success');
     }
 
@@ -182,6 +197,7 @@ class Imap2Nas {
                 this.log(pdfError, 'error');
             } else {
                 fs.chmodSync(filePath, 644);
+                fs.chownSync(filePath, this.configuration.userId, this.configuration.groupId);
                 this.log('Created PDF #' + id + ' successful', 'success');
             }
 
@@ -202,6 +218,7 @@ class Imap2Nas {
 
             fs.writeFileSync(filePath, attachment.content, 'binary');
             fs.chmodSync(filePath, 644);
+            fs.chownSync(filePath, this.configuration.userId, this.configuration.groupId);
             this.log('Created attachment ' + attachment.filename + ' of #' + id + ' successful', 'success');
         });
     }

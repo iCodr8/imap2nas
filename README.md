@@ -22,6 +22,8 @@ services:
       - IMAP_PASSWORD=XXXXXXXXXXXXXXXX
       - IMAP_PORT=993
       - IMAP_TLS=true
+      - USER_ID=0
+      - GROUP_ID=0
       - MAIL_STORAGE_PATH=/imap2nas/data
       - PHANTOMJS_PATH=/usr/local/bin/phantomjs
       - GENERATE_HTML=true
