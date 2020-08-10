@@ -143,15 +143,12 @@ class Imap2Nas {
 
             mkdirp.sync(pathToFile);
 
-            fs.chmodSync(pathToFile, 0o664);
             fs.chownSync(pathToFile, this.configuration.userId, this.configuration.groupId);
 
             const pathToFileSub1 = path.dirname(pathToFile);
-            fs.chmodSync(pathToFileSub1, 0o664);
             fs.chownSync(pathToFileSub1, this.configuration.userId, this.configuration.groupId);
 
             const pathToFileSub2 = path.dirname(pathToFileSub1);
-            fs.chmodSync(pathToFileSub2, 0o664);
             fs.chownSync(pathToFileSub2, this.configuration.userId, this.configuration.groupId);
 
             if (this.configuration.generateAsHtml) {
@@ -177,7 +174,6 @@ class Imap2Nas {
         }
 
         fs.writeFileSync(filePath, html);
-        fs.chmodSync(filePath, 0o775);
         fs.chownSync(filePath, this.configuration.userId, this.configuration.groupId);
         this.log('Created HTML #' + id + ' successful', 'success');
     }
@@ -199,7 +195,6 @@ class Imap2Nas {
             if (pdfError) {
                 this.log(pdfError, 'error');
             } else {
-                fs.chmodSync(filePath, 0o775);
                 fs.chownSync(filePath, this.configuration.userId, this.configuration.groupId);
                 this.log('Created PDF #' + id + ' successful', 'success');
             }
@@ -220,7 +215,6 @@ class Imap2Nas {
             }
 
             fs.writeFileSync(filePath, attachment.content, 'binary');
-            fs.chmodSync(filePath, 0o775);
             fs.chownSync(filePath, this.configuration.userId, this.configuration.groupId);
             this.log('Created attachment ' + attachment.filename + ' of #' + id + ' successful', 'success');
         });
